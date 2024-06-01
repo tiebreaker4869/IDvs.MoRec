@@ -16,14 +16,14 @@ mode = 'train'
 item_tower = 'id'
 
 epoch = 50
-load_ckpt_name = 'epoch-5.pt'
+load_ckpt_name = 'epoch-8.pt'
 
 
 l2_weight = 0.1
 drop_rate = 0.1
 batch_size = 256
 lr = 1e-4
-embedding_dim = 1024
+embedding_dim = 512
 
 fine_tune_lr = 0
 label_screen = '{}_bs{}_ed{}_lr{}_dp{}_wd{}_Flr{}'.format(

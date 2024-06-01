@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 from .dataset import BuildEvalDataset, SequentialDistributedSampler
 import torch.distributed as dist
 import math
-
+import pandas as pd
 
 class ItemsDataset(Dataset):
     def __init__(self, data):
@@ -106,3 +106,45 @@ def eval_model(model, user_history, eval_seq, item_embeddings, test_batch_size, 
         print_metrics(mean_eval, Log_file, v_or_t)
     return mean_eval[0]
 
+
+def save_top100_recommendations_to_csv(model, user_history, eval_seq, item_embeddings, test_batch_size, args, item_num, local_rank):
+    model.eval()
+    # 定义数据集和数据加载器
+    eval_dataset = BuildEvalDataset(u2seq=eval_seq, item_content=item_embeddings,
+                                    max_seq_len=args.max_seq_len, item_num=item_num)
+    test_sampler = SequentialDistributedSampler(eval_dataset, batch_size=test_batch_size)
+    eval_dl = DataLoader(eval_dataset, batch_size=test_batch_size,
+                         num_workers=args.num_workers, pin_memory=True, sampler=test_sampler)
+
+    topK = 100  # Top 100 推荐物品
+
+    # 初始化保存推荐列表的列表
+    recommendations = []
+    item_embeddings = item_embeddings.to(local_rank)
+
+    # 开始评估模型
+    with torch.no_grad():
+        for data in eval_dl:
+            user_ids, input_embs, log_mask, labels = data
+            user_ids, input_embs, log_mask, labels = \
+                user_ids.to(local_rank), input_embs.to(local_rank),\
+                log_mask.to(local_rank), labels.to(local_rank).detach()
+            prec_emb = model.module.user_encoder(input_embs, log_mask, local_rank)[:, -1].to(local_rank).detach()
+            scores = torch.matmul(prec_emb, item_embeddings.t()).squeeze(dim=-1).detach()
+            for user_id, score in zip(user_ids, scores):
+                user_id = user_id[0].item()
+                history = user_history[user_id].to(local_rank)
+                score[history] = -np.inf
+                score = score[1:]
+                score = torch.softmax(score, dim=0)
+                # 获取 top 100 推荐物品及其分数
+                topk_scores, topk_items = torch.topk(score, topK)
+                topk_items = topk_items.cpu().numpy()
+                topk_scores = topk_scores.cpu().numpy()
+                recommendations.append((user_id, topk_items, topk_scores))
+
+    # 创建 DataFrame
+    df = pd.DataFrame(recommendations, columns=["User ID", "Top 100 Items", "Top 100 Scores"])
+
+    # 将 DataFrame 保存为 CSV 文件
+    df.to_csv("top100_recommendations.csv", index=False)
