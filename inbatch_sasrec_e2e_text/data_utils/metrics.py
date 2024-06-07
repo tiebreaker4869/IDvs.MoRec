@@ -107,7 +107,7 @@ def eval_model(model, user_history, eval_seq, item_embeddings, test_batch_size, 
     return mean_eval[0]
 
 
-def save_top100_recommendations_to_csv(model, user_history, eval_seq, item_embeddings, test_batch_size, args, item_num, local_rank):
+def save_topk_recommendations_to_csv(model, user_history, eval_seq, item_embeddings, test_batch_size, args, item_num, local_rank, k):
     model.eval()
     # 定义数据集和数据加载器
     eval_dataset = BuildEvalDataset(u2seq=eval_seq, item_content=item_embeddings,
@@ -116,7 +116,7 @@ def save_top100_recommendations_to_csv(model, user_history, eval_seq, item_embed
     eval_dl = DataLoader(eval_dataset, batch_size=test_batch_size,
                          num_workers=args.num_workers, pin_memory=True, sampler=test_sampler)
 
-    topK = 100  # Top 100 推荐物品
+    topK = k  # Top 100 推荐物品
 
     # 初始化保存推荐列表的列表
     recommendations = []
@@ -136,15 +136,15 @@ def save_top100_recommendations_to_csv(model, user_history, eval_seq, item_embed
                 history = user_history[user_id].to(local_rank)
                 score[history] = -np.inf
                 score = score[1:]
-                score = torch.softmax(score, dim=0)
                 # 获取 top 100 推荐物品及其分数
                 topk_scores, topk_items = torch.topk(score, topK)
                 topk_items = topk_items.cpu().numpy()
                 topk_scores = topk_scores.cpu().numpy()
+                topk_scores = torch.softmax(torch.tensor(topk_scores), dim=0).numpy()
                 recommendations.append((user_id, topk_items, topk_scores))
 
     # 创建 DataFrame
-    df = pd.DataFrame(recommendations, columns=["User ID", "Top 100 Items", "Top 100 Scores"])
+    df = pd.DataFrame(recommendations, columns=["User ID", "Top k Items", "Top k Scores"])
 
     # 将 DataFrame 保存为 CSV 文件
     df.to_csv("top100_recommendations.csv", index=False)
