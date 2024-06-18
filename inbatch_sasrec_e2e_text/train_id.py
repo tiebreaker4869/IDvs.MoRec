@@ -2,9 +2,9 @@ import os
 
 root_data_dir = '../'
 
-dataset = 'dataset/MIND'
-behaviors = 'mind_60w_users.tsv'
-news = 'mind_60w_items.tsv'
+dataset = 'dataset/Microlens'
+behaviors = 'MicroLens-50k_pairs.tsv'
+news = 'MicroLens-50k_titles.csv'
 logging_num = 4
 testing_num = 1
 

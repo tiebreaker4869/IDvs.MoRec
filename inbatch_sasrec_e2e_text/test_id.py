@@ -2,9 +2,9 @@ import os
 
 root_data_dir = '../'
 
-dataset = 'dataset/MIND'
-behaviors = 'mind_60w_users.tsv'
-news = 'mind_60w_items.tsv'
+dataset = 'dataset/Microlens'
+behaviors = 'MicroLens-50k_pairs.tsv'
+news = 'MicroLens-50k_titles.csv'
 logging_num = 4
 testing_num = 1
 
@@ -16,14 +16,14 @@ mode = 'train'
 item_tower = 'id'
 
 epoch = 50
-load_ckpt_name = 'epoch-8.pt'
+load_ckpt_name = 'best.pt'
 
 
 l2_weight = 0.1
 drop_rate = 0.1
 batch_size = 256
-lr = 1e-4
-embedding_dim = 512
+lr = 5e-5
+embedding_dim = 1024
 
 fine_tune_lr = 0
 label_screen = '{}_bs{}_ed{}_lr{}_dp{}_wd{}_Flr{}'.format(

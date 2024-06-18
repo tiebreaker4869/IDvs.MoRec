@@ -134,7 +134,7 @@ def run_eval(model, item_content, user_history, users_eval, batch_size, item_num
     eval_start_time = time.time()
     Log_file.info('Validating...')
     item_embeddings = get_item_embeddings(model, item_content, batch_size, args, use_modal, local_rank)
-    save_topk_recommendations_to_csv(model, user_history, users_eval, item_embeddings, batch_size, args, item_num, local_rank, 50)
+    save_topk_recommendations_to_csv(model, user_history, users_eval, item_embeddings, batch_size, args, item_num, local_rank, 20)
     valid_Hit10 = eval_model(model, user_history, users_eval, item_embeddings, batch_size, args,
                              item_num, Log_file, mode, local_rank)
     report_time_eval(eval_start_time, Log_file)
