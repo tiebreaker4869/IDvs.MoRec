@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import pandas as pd
 
 
 def read_behaviors(behaviors_path, before_item_id_to_dic, before_item_name_to_id, before_item_id_to_name, max_seq_len, min_seq_len, Log_file):
@@ -86,14 +87,21 @@ def read_news(news_path):
     item_id_to_name = {}
     item_name_to_id = {}
     item_id = 1
-    with open(news_path, "r") as f:
-        for line in f:
-            splited = line.strip('\n').split('\t')
-            doc_name, _, _ = splited
-            item_name_to_id[doc_name] = item_id
-            item_id_to_dic[item_id] = doc_name
-            item_id_to_name[item_id] = doc_name
-            item_id += 1
+    titles = pd.read_csv(news_path)
+    for i in range(titles.shape[0]):
+        doc_name = str(titles.iloc[i,0])
+        item_name_to_id[doc_name] = item_id
+        item_id_to_dic[item_id] = doc_name
+        item_id_to_name[item_id] = doc_name
+        item_id += 1
+    #with open(news_path, "r") as f:
+        #for line in f:
+            #splited = line.strip('\n').split(',')
+            #doc_name, _, _ = splited
+            #item_name_to_id[doc_name] = item_id
+            #item_id_to_dic[item_id] = doc_name
+            #item_id_to_name[item_id] = doc_name
+            #item_id += 1
     item_id_to_dic[item_id] = 'this is a mask sentence'
     return item_id_to_dic, item_name_to_id, item_id_to_name
 

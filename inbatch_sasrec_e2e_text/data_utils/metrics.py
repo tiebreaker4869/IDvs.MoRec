@@ -139,12 +139,10 @@ def save_topk_recommendations_to_csv(model, user_history, eval_seq, item_embeddi
                 # 获取 top 100 推荐物品及其分数
                 topk_scores, topk_items = torch.topk(score, topK)
                 topk_items = topk_items.cpu().numpy()
-                topk_scores = topk_scores.cpu().numpy()
-                topk_scores = torch.softmax(torch.tensor(topk_scores), dim=0).numpy()
-                recommendations.append((user_id, topk_items, topk_scores))
+                recommendations.append((user_id, topk_items))
 
     # 创建 DataFrame
-    df = pd.DataFrame(recommendations, columns=["User ID", "Top k Items", "Top k Scores"])
+    df = pd.DataFrame(recommendations, columns=["User ID", "Top k Items"])
 
     # 将 DataFrame 保存为 CSV 文件
-    df.to_csv("top100_recommendations.csv", index=False)
+    df.to_csv("topk_recommendations.csv", index=False)

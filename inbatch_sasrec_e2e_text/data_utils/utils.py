@@ -105,7 +105,7 @@ def para_and_log(model, seq_num, batch_size, Log_file, logging_num, testing_num)
 
 
 def save_model(now_epoch, model, model_dir, optimizer, rng_state, cuda_rng_state, scaler, Log_file):
-    ckpt_path = os.path.join(model_dir, f'epoch-{now_epoch}.pt')
+    ckpt_path = os.path.join(model_dir, f'best.pt')
     torch.save({'model_state_dict': model.module.state_dict(),
                 'optimizer': optimizer.state_dict(),
                 'rng_state': rng_state,
