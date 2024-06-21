@@ -139,7 +139,7 @@ def save_topk_recommendations_to_csv(model, user_history, eval_seq, item_embeddi
                 # 获取 top 100 推荐物品及其分数
                 topk_scores, topk_items = torch.topk(score, topK)
                 topk_items = topk_items.cpu().numpy()
-                recommendations.append((user_id, topk_items))
+                recommendations.append((user_id + 1, topk_items))
 
     # 创建 DataFrame
     df = pd.DataFrame(recommendations, columns=["User ID", "Top k Items"])
