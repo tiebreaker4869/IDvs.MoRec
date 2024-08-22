@@ -102,8 +102,7 @@ def train(args, use_modal, local_rank):
         Log_file.info('read behaviors...')
         item_num, item_id_to_dic, users_train, users_valid, users_test, \
         users_history_for_valid, users_history_for_test, item_name_to_id, pop_prob_list = \
-            read_behaviors(os.path.join(args.root_data_dir, args.dataset, args.behaviors), before_item_id_to_dic,
-                           before_item_name_to_id, before_item_id_to_name, args.max_seq_len, args.min_seq_len, Log_file)
+            read_behaviors(os.path.join(args.root_data_dir, args.dataset, args.behaviors), before_item_id_to_dic, before_item_name_to_id, before_item_id_to_name, args.max_seq_len, args.min_seq_len, Log_file)
         item_content = np.arange(item_num + 1)
         bert_model = None
 
@@ -129,7 +128,8 @@ def train(args, use_modal, local_rank):
 
     if 'None' not in args.load_ckpt_name:
         Log_file.info('load ckpt if not None...')
-        ckpt_path = get_checkpoint(model_dir, args.load_ckpt_name)
+        # ckpt_path = get_checkpoint(model_dir, args.load_ckpt_name)
+        ckpt_path = get_checkpoint("checkpoint_id/cpt_id_ed_1024_bs_128_lr_0.0001_Flr_0.0_L2_0.1_FL2_0", args.load_ckpt_name)
         checkpoint = torch.load(ckpt_path, map_location=torch.device('cpu'))
         Log_file.info('load checkpoint...')
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -146,7 +146,7 @@ def train(args, use_modal, local_rank):
 
     Log_file.info('model.cuda()...')
     model = DDP(model, device_ids=[local_rank], output_device=local_rank, find_unused_parameters=True)
-
+    
     if use_modal:
         bert_params = []
         recsys_params = []
@@ -190,9 +190,9 @@ def train(args, use_modal, local_rank):
     else:
         optimizer = optim.AdamW(model.module.parameters(), lr=args.lr, weight_decay=args.l2_weight)
 
-    if 'None' not in args.load_ckpt_name:
-        optimizer.load_state_dict(checkpoint["optimizer"])
-        Log_file.info(f"optimizer loaded from {ckpt_path}")
+    # if 'None' not in args.load_ckpt_name:
+        #optimizer.load_state_dict(checkpoint["optimizer"])
+        # Log_file.info(f"optimizer loaded from {ckpt_path}")
 
     total_num = sum(p.numel() for p in model.parameters())
     trainable_num = sum(p.numel() for p in model.parameters() if p.requires_grad)

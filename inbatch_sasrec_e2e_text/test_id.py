@@ -2,9 +2,9 @@ import os
 
 root_data_dir = '../'
 
-dataset = 'dataset/Microlens'
-behaviors = 'MicroLens-50k_pairs.tsv'
-news = 'MicroLens-50k_titles.csv'
+dataset = 'dataset/MovieLens'
+behaviors = 'MovieLens_pairs.tsv'
+news = 'MovieLens_titles.csv'
 logging_num = 4
 testing_num = 1
 
@@ -21,8 +21,8 @@ load_ckpt_name = 'best.pt'
 
 l2_weight = 0.1
 drop_rate = 0.1
-batch_size = 256
-lr = 5e-5
+batch_size = 128
+lr = 1e-4
 embedding_dim = 1024
 
 fine_tune_lr = 0
@@ -30,7 +30,7 @@ label_screen = '{}_bs{}_ed{}_lr{}_dp{}_wd{}_Flr{}'.format(
     item_tower, batch_size, embedding_dim, lr,
     drop_rate, l2_weight, fine_tune_lr)
 run_py = "CUDA_VISIBLE_DEVICES='0' \
-         python3  -m torch.distributed.launch --nproc_per_node 1 --master_port 1234\
+         python  -m torch.distributed.launch --nproc_per_node 1 --master_port 1234\
          run_test.py --root_data_dir {}  --dataset {} --behaviors {} --news {}\
          --mode {} --item_tower {} --load_ckpt_name {} --label_screen {} --logging_num {} --testing_num {}\
          --l2_weight {} --drop_rate {} --batch_size {} --lr {} --embedding_dim {} \

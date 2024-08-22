@@ -2,9 +2,9 @@ import os
 
 root_data_dir = '../'
 
-dataset = 'dataset/Microlens'
-behaviors = 'MicroLens-50k_pairs.tsv'
-news = 'MicroLens-50k_titles.csv'
+dataset = 'dataset/MovieLens'
+behaviors = 'MovieLens_pairs.tsv'
+news = 'MovieLens_titles.csv'
 logging_num = 4
 testing_num = 1
 
@@ -16,7 +16,7 @@ mode = 'train'
 item_tower = 'id'
 
 epoch = 50
-load_ckpt_name = 'None'
+load_ckpt_name = 'epoch-21.pt'
 
 
 l2_weight_list = [0.1]
@@ -44,4 +44,5 @@ for embedding_dim in embedding_dim_list:
                         mode, item_tower, load_ckpt_name, label_screen, logging_num, testing_num,
                         l2_weight, drop_rate, batch_size, lr, embedding_dim,
                         news_attributes, bert_model_load, epoch, freeze_paras_before, fine_tune_lr)
+                    print(run_py)
                     os.system(run_py)
