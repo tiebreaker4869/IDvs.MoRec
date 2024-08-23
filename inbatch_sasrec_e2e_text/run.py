@@ -128,8 +128,8 @@ def train(args, use_modal, local_rank):
 
     if 'None' not in args.load_ckpt_name:
         Log_file.info('load ckpt if not None...')
-        # ckpt_path = get_checkpoint(model_dir, args.load_ckpt_name)
-        ckpt_path = get_checkpoint("checkpoint_id/cpt_id_ed_1024_bs_128_lr_0.0001_Flr_0.0_L2_0.1_FL2_0", args.load_ckpt_name)
+        ckpt_path = get_checkpoint(model_dir, args.load_ckpt_name)
+        # ckpt_path = get_checkpoint("checkpoint_id/cpt_id_ed_1024_bs_128_lr_0.0001_Flr_0.0_L2_0.1_FL2_0", args.load_ckpt_name)
         checkpoint = torch.load(ckpt_path, map_location=torch.device('cpu'))
         Log_file.info('load checkpoint...')
         model.load_state_dict(checkpoint['model_state_dict'])

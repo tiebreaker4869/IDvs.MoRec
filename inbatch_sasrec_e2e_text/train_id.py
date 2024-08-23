@@ -16,7 +16,7 @@ mode = 'train'
 item_tower = 'id'
 
 epoch = 50
-load_ckpt_name = 'epoch-21.pt'
+load_ckpt_name = None 
 
 
 l2_weight_list = [0.1]

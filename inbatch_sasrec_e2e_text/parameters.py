@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--embedding_dim", type=int, default=256)
     parser.add_argument("--num_attention_heads", type=int, default=2)
     parser.add_argument("--transformer_block", type=int, default=2)
-    parser.add_argument("--max_seq_len", type=int, default=20)
+    parser.add_argument("--max_seq_len", type=int, default=100)
     parser.add_argument("--min_seq_len", type=int, default=5)
 
     # ============== switch and logging setting ==============
